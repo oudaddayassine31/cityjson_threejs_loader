@@ -1,298 +1,298 @@
 import { ShaderChunk, ShaderLib,
-		 UniformsLib,
-		 UniformsUtils } from "three";
+	UniformsLib,
+	UniformsUtils } from "three";
 import 'three/examples/jsm/lines/LineMaterial';
 import { CityObjectsBaseMaterial } from "./CityObjectsBaseMaterial";
 
 export class CityObjectsLineMaterial extends CityObjectsBaseMaterial {
 
-	constructor( parameters ) {
+constructor( parameters ) {
 
-		const shader = ShaderLib[ 'line' ];
+ const shader = ShaderLib[ 'line' ];
 
-		const newShader = { ...shader };
-		newShader.uniforms = {
-			...UniformsLib.cityobject,
-			...UniformsUtils.clone( shader.uniforms ),
-		};
-		newShader.extensions = {
-			derivatives: true,
-		};
-		newShader.lights = false;
-		newShader.vertexShader =
-		ShaderChunk.cityobjectinclude_vertex +
-		newShader.vertexShader.replace(
-			/#include <fog_vertex>/,
-			`
-			#include <fog_vertex>
-			`
-			+ ShaderChunk.cityobjectdiffuse_vertex
-			+ ShaderChunk.cityobjectshowlod_vertex
-		);
-		newShader.fragmentShader =
-		`
-			varying vec3 diffuse_;
-			varying float discard_;
-		` +
-		newShader.fragmentShader.replace(
-			/vec4 diffuseColor = vec4\( diffuse, alpha \);/,
-			`
-			vec4 diffuseColor = vec4( diffuse_, alpha );
+ const newShader = { ...shader };
+ newShader.uniforms = {
+	 ...UniformsLib.cityobject,
+	 ...UniformsUtils.clone( shader.uniforms ),
+ };
+ newShader.extensions = {
+	 derivatives: true,
+ };
+ newShader.lights = false;
+ newShader.vertexShader =
+ ShaderChunk.cityobjectinclude_vertex +
+ newShader.vertexShader.replace(
+	 /#include <fog_vertex>/,
+	 `
+	 #include <fog_vertex>
+	 `
+	 + ShaderChunk.cityobjectdiffuse_vertex
+	 + ShaderChunk.cityobjectshowlod_vertex
+ );
+ newShader.fragmentShader =
+ `
+	 varying vec3 diffuse_;
+	 varying float discard_;
+ ` +
+ newShader.fragmentShader.replace(
+	 /vec4 diffuseColor = vec4\( diffuse, alpha \);/,
+	 `
+	 vec4 diffuseColor = vec4( diffuse_, alpha );
 
-			#ifdef SHOW_LOD
+	 #ifdef SHOW_LOD
 
-				if ( discard_ > 0.0 ) {
-					discard;
-				}
-			
-			#endif
-			`
-		);
+		 if ( discard_ > 0.0 ) {
+			 discard;
+		 }
+	 
+	 #endif
+	 `
+ );
 
-		super( newShader );
+ super( newShader );
 
-		Object.defineProperties( this, {
+ Object.defineProperties( this, {
 
-			color: {
+	 color: {
 
-				enumerable: true,
+		 enumerable: true,
 
-				get: function () {
+		 get: function () {
 
-					return this.uniforms.diffuse.value;
+			 return this.uniforms.diffuse.value;
 
-				},
+		 },
 
-				set: function ( value ) {
+		 set: function ( value ) {
 
-					this.uniforms.diffuse.value = value;
+			 this.uniforms.diffuse.value = value;
 
-				}
+		 }
 
-			},
+	 },
 
-			worldUnits: {
+	 worldUnits: {
 
-				enumerable: true,
+		 enumerable: true,
 
-				get: function () {
+		 get: function () {
 
-					return 'WORLD_UNITS' in this.defines;
+			 return 'WORLD_UNITS' in this.defines;
 
-				},
+		 },
 
-				set: function ( value ) {
+		 set: function ( value ) {
 
-					if ( value === true ) {
+			 if ( value === true ) {
 
-						this.defines.WORLD_UNITS = '';
+				 this.defines.WORLD_UNITS = '';
 
-					} else {
+			 } else {
 
-						delete this.defines.WORLD_UNITS;
+				 delete this.defines.WORLD_UNITS;
 
-					}
+			 }
 
-				}
+		 }
 
-			},
+	 },
 
-			linewidth: {
+	 linewidth: {
 
-				enumerable: true,
+		 enumerable: true,
 
-				get: function () {
+		 get: function () {
 
-					return this.uniforms.linewidth.value;
+			 return this.uniforms.linewidth.value;
 
-				},
+		 },
 
-				set: function ( value ) {
+		 set: function ( value ) {
 
-					this.uniforms.linewidth.value = value;
+			 this.uniforms.linewidth.value = value;
 
-				}
+		 }
 
-			},
+	 },
 
-			dashed: {
+	 dashed: {
 
-				enumerable: true,
+		 enumerable: true,
 
-				get: function () {
+		 get: function () {
 
-					return Boolean( 'USE_DASH' in this.defines );
+			 return Boolean( 'USE_DASH' in this.defines );
 
-				},
+		 },
 
-				set( value ) {
+		 set( value ) {
 
-					if ( Boolean( value ) !== Boolean( 'USE_DASH' in this.defines ) ) {
+			 if ( Boolean( value ) !== Boolean( 'USE_DASH' in this.defines ) ) {
 
-						this.needsUpdate = true;
+				 this.needsUpdate = true;
 
-					}
+			 }
 
-					if ( value === true ) {
+			 if ( value === true ) {
 
-						this.defines.USE_DASH = '';
+				 this.defines.USE_DASH = '';
 
-					} else {
+			 } else {
 
-						delete this.defines.USE_DASH;
+				 delete this.defines.USE_DASH;
 
-					}
+			 }
 
-				}
+		 }
 
-			},
+	 },
 
-			dashScale: {
+	 dashScale: {
 
-				enumerable: true,
+		 enumerable: true,
 
-				get: function () {
+		 get: function () {
 
-					return this.uniforms.dashScale.value;
+			 return this.uniforms.dashScale.value;
 
-				},
+		 },
 
-				set: function ( value ) {
+		 set: function ( value ) {
 
-					this.uniforms.dashScale.value = value;
+			 this.uniforms.dashScale.value = value;
 
-				}
+		 }
 
-			},
+	 },
 
-			dashSize: {
+	 dashSize: {
 
-				enumerable: true,
+		 enumerable: true,
 
-				get: function () {
+		 get: function () {
 
-					return this.uniforms.dashSize.value;
+			 return this.uniforms.dashSize.value;
 
-				},
+		 },
 
-				set: function ( value ) {
+		 set: function ( value ) {
 
-					this.uniforms.dashSize.value = value;
+			 this.uniforms.dashSize.value = value;
 
-				}
+		 }
 
-			},
+	 },
 
-			dashOffset: {
+	 dashOffset: {
 
-				enumerable: true,
+		 enumerable: true,
 
-				get: function () {
+		 get: function () {
 
-					return this.uniforms.dashOffset.value;
+			 return this.uniforms.dashOffset.value;
 
-				},
+		 },
 
-				set: function ( value ) {
+		 set: function ( value ) {
 
-					this.uniforms.dashOffset.value = value;
+			 this.uniforms.dashOffset.value = value;
 
-				}
+		 }
 
-			},
+	 },
 
-			gapSize: {
+	 gapSize: {
 
-				enumerable: true,
+		 enumerable: true,
 
-				get: function () {
+		 get: function () {
 
-					return this.uniforms.gapSize.value;
+			 return this.uniforms.gapSize.value;
 
-				},
+		 },
 
-				set: function ( value ) {
+		 set: function ( value ) {
 
-					this.uniforms.gapSize.value = value;
+			 this.uniforms.gapSize.value = value;
 
-				}
+		 }
 
-			},
+	 },
 
-			opacity: {
+	 opacity: {
 
-				enumerable: true,
+		 enumerable: true,
 
-				get: function () {
+		 get: function () {
 
-					return this.uniforms.opacity.value;
+			 return this.uniforms.opacity.value;
 
-				},
+		 },
 
-				set: function ( value ) {
+		 set: function ( value ) {
 
-					this.uniforms.opacity.value = value;
+			 this.uniforms.opacity.value = value;
 
-				}
+		 }
 
-			},
+	 },
 
-			resolution: {
+	 resolution: {
 
-				enumerable: true,
+		 enumerable: true,
 
-				get: function () {
+		 get: function () {
 
-					return this.uniforms.resolution.value;
+			 return this.uniforms.resolution.value;
 
-				},
+		 },
 
-				set: function ( value ) {
+		 set: function ( value ) {
 
-					this.uniforms.resolution.value.copy( value );
+			 this.uniforms.resolution.value.copy( value );
 
-				}
+		 }
 
-			},
+	 },
 
-			alphaToCoverage: {
+	 alphaToCoverage: {
 
-				enumerable: true,
+		 enumerable: true,
 
-				get: function () {
+		 get: function () {
 
-					return Boolean( 'USE_ALPHA_TO_COVERAGE' in this.defines );
+			 return Boolean( 'USE_ALPHA_TO_COVERAGE' in this.defines );
 
-				},
+		 },
 
-				set: function ( value ) {
+		 set: function ( value ) {
 
-					if ( Boolean( value ) !== Boolean( 'USE_ALPHA_TO_COVERAGE' in this.defines ) ) {
+			 if ( Boolean( value ) !== Boolean( 'USE_ALPHA_TO_COVERAGE' in this.defines ) ) {
 
-						this.needsUpdate = true;
+				 this.needsUpdate = true;
 
-					}
+			 }
 
-					if ( value === true ) {
+			 if ( value === true ) {
 
-						this.defines.USE_ALPHA_TO_COVERAGE = '';
-						this.extensions.derivatives = true;
+				 this.defines.USE_ALPHA_TO_COVERAGE = '';
+				 this.extensions.derivatives = true;
 
-					} else {
+			 } else {
 
-						delete this.defines.USE_ALPHA_TO_COVERAGE;
-						this.extensions.derivatives = false;
+				 delete this.defines.USE_ALPHA_TO_COVERAGE;
+				 this.extensions.derivatives = false;
 
-					}
+			 }
 
-				}
+		 }
 
-			}
+	 }
 
-		} );
+ } );
 
-		this.setValues( parameters );
+ this.setValues( parameters );
 
-	}
+}
 
 }

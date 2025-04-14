@@ -1,5 +1,5 @@
 import { Matrix4, ShaderLib } from 'three';
-import { defaultObjectColors, defaultSemanticsColors,defaultClassColors } from '../defaults/colors.js';
+import { defaultObjectColors, defaultSemanticsColors } from '../defaults/colors.js';
 import { POINTS, LINES, TRIANGLES } from './geometry/GeometryData';
 import 'three/examples/jsm/lines/LineMaterial';
 import { CityObjectsMaterial } from '../materials/CityObjectsMaterial.js';

@@ -1,8 +1,4 @@
-import { Texture } from "three";
-import { sRGBEncoding } from "three";
-import { ShaderLib } from "three";
-import { RepeatWrapping } from "three";
-import { TextureLoader } from "three";
+import { Texture, ShaderLib, RepeatWrapping, TextureLoader, SRGBColorSpace } from "three";
 import { CityObjectsMaterial } from "../materials/CityObjectsMaterial";
 
 export class TextureManager {
@@ -53,7 +49,8 @@ export class TextureManager {
 
 					const mat = new CityObjectsMaterial( ShaderLib.lambert, {
 						objectColors: baseMaterial.objectColors,
-						surfaceColors: baseMaterial.surfaceColors
+						surfaceColors: baseMaterial.surfaceColors,
+						transparent: true
 					} );
 
 					mat.uniforms.cityTexture.value = this.textures[ i ];
@@ -95,7 +92,7 @@ export class TextureManager {
 
 		new TextureLoader().load( url, ( tex => {
 
-			tex.encoding = sRGBEncoding;
+			tex.encoding = SRGBColorSpace;
 			tex.wrapS = RepeatWrapping;
 			tex.wrapT = RepeatWrapping;
 
@@ -142,7 +139,7 @@ export class TextureManager {
 
 						const tex = new Texture( evt.target );
 
-						tex.encoding = sRGBEncoding;
+						tex.encoding = SRGBColorSpace;
 						tex.wrapS = RepeatWrapping;
 						tex.wrapT = RepeatWrapping;
 						tex.needsUpdate = true;

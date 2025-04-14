@@ -66,20 +66,30 @@ export class BaseParser {
 	}
 	//geoscity
 	getSurfaceClassIdx(idx, semantics, surfaces) {
-		let classValue = -1;
-		if (semantics.length > 0) {
-				const surface = surfaces[semantics[idx]];
-				if (surface && surface.class !== undefined) {
-						const classKey = `class${surface.class}`;
-						classValue = Object.keys(this.classColors).indexOf(classKey);
-						if (classValue < 0) {
-								classValue = Object.keys(this.classColors).length;
-								this.classColors[classKey] = Math.floor(Math.random() * 0xffffff);
-						}
-				}
-		}
-		return classValue;
-	}
+		
+    let classValue = -1;
+    if (semantics.length > 0) {
+        const surface = surfaces[semantics[idx]];
+        console.log(`Surface at index ${idx}:`, surface);
+        
+        if (surface && surface.class !== undefined) {
+            const classKey = `class${surface.class}`;
+            console.log(`Found class value: ${surface.class}, using key: ${classKey}`);
+            
+            classValue = Object.keys(this.classColors).indexOf(classKey);
+            console.log(`Class value index in classColors: ${classValue}`);
+            
+            if (classValue < 0) {
+                classValue = Object.keys(this.classColors).length;
+                this.classColors[classKey] = Math.floor(Math.random() * 0xffffff);
+                console.log(`Added new class color for ${classKey}: ${this.classColors[classKey].toString(16)}`);
+            }
+        } else {
+            console.log(`No class attribute found for surface at index ${idx}`);
+        }
+    }
+    return classValue;
+}
 
 	getSurfaceMaterials( idx, material ) {
 

@@ -35,6 +35,12 @@ ShaderChunk.cityobjectinclude_vertex = `
 
         #endif
 
+				#ifdef SHOW_CLASSES
+						uniform vec3 classColors[ CLASS_COUNT ];
+						uniform bool useClassColoring;
+						attribute int classtype;
+				#endif
+
 		#ifdef COLOR_ATTRIBUTE
 
             uniform vec3 attributeColors[ ATTRIBUTE_COUNT ];

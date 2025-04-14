@@ -1,225 +1,225 @@
 import { BufferAttribute,
-		 BufferGeometry,
-		 Int32BufferAttribute,
-		 Mesh } from 'three';
+	BufferGeometry,
+	Int32BufferAttribute,
+	Mesh } from 'three';
 
 export class CityObjectsMesh extends Mesh {
 
-	constructor( citymodel, vertices, geometryData, matrix, material ) {
+constructor( citymodel, vertices, geometryData, matrix, material ) {
 
-		const geom = new BufferGeometry();
+ const geom = new BufferGeometry();
 
-		const vertexArray = new Float32Array( vertices );
-		geom.setAttribute( 'position', new BufferAttribute( vertexArray, 3 ) );
-		const idsArray = new Uint16Array( geometryData.objectIds );
-		geom.setAttribute( 'objectid', new BufferAttribute( idsArray, 1 ) );
-		const typeArray = new Uint8Array( geometryData.objectType );
-		geom.setAttribute( 'type', new Int32BufferAttribute( typeArray, 1 ) );
-		const surfaceTypeArray = new Int8Array( geometryData.semanticSurfaces );
-		geom.setAttribute( 'surfacetype', new Int32BufferAttribute( surfaceTypeArray, 1 ) );
-		const geomIdsArray = new Float32Array( geometryData.geometryIds );
-		//geoscity adds 
-		if (geometryData.semanticClasses) {
-			const classTypeArray = new Int8Array(geometryData.semanticClasses);
-			geom.setAttribute('classtype', new Int32BufferAttribute(classTypeArray, 1));
-		}
+ const vertexArray = new Float32Array( vertices );
+ geom.setAttribute( 'position', new BufferAttribute( vertexArray, 3 ) );
+ const idsArray = new Uint16Array( geometryData.objectIds );
+ geom.setAttribute( 'objectid', new BufferAttribute( idsArray, 1 ) );
+ const typeArray = new Uint8Array( geometryData.objectType );
+ geom.setAttribute( 'type', new Int32BufferAttribute( typeArray, 1 ) );
+ const surfaceTypeArray = new Int8Array( geometryData.semanticSurfaces );
+ geom.setAttribute( 'surfacetype', new Int32BufferAttribute( surfaceTypeArray, 1 ) );
+ const geomIdsArray = new Float32Array( geometryData.geometryIds );
+ //geoscity adds 
+ if (geometryData.semanticClasses) {
+	 const classTypeArray = new Int8Array(geometryData.semanticClasses);
+	 geom.setAttribute('classtype', new Int32BufferAttribute(classTypeArray, 1));
+ }
 
-		geom.setAttribute( 'geometryid', new BufferAttribute( geomIdsArray, 1 ) );
-		const lodIdsArray = new Int8Array( geometryData.lodIds );
-		geom.setAttribute( 'lodid', new BufferAttribute( lodIdsArray, 1 ) );
-		const boundaryIdsArray = new Float32Array( geometryData.boundaryIds );
-		geom.setAttribute( 'boundaryid', new BufferAttribute( boundaryIdsArray, 1 ) );
+ geom.setAttribute( 'geometryid', new BufferAttribute( geomIdsArray, 1 ) );
+ const lodIdsArray = new Int8Array( geometryData.lodIds );
+ geom.setAttribute( 'lodid', new BufferAttribute( lodIdsArray, 1 ) );
+ const boundaryIdsArray = new Float32Array( geometryData.boundaryIds );
+ geom.setAttribute( 'boundaryid', new BufferAttribute( boundaryIdsArray, 1 ) );
 
-		for ( const material in geometryData.materials ) {
+ for ( const material in geometryData.materials ) {
 
-			const themeName = material.replace( /[^a-z0-9]/gi, '' );
+	 const themeName = material.replace( /[^a-z0-9]/gi, '' );
 
-			const materialArray = new Uint8Array( geometryData.materials[ material ] );
-			geom.setAttribute( `mat${themeName}`, new Int32BufferAttribute( materialArray, 1 ) );
+	 const materialArray = new Uint8Array( geometryData.materials[ material ] );
+	 geom.setAttribute( `mat${themeName}`, new Int32BufferAttribute( materialArray, 1 ) );
 
-		}
+ }
 
-		for ( const texture in geometryData.textures ) {
+ for ( const texture in geometryData.textures ) {
 
-			const themeName = texture.replace( /[^a-z0-9]/gi, '' );
+	 const themeName = texture.replace( /[^a-z0-9]/gi, '' );
 
-			const textureArray = new Int16Array( geometryData.textures[ texture ].index );
-			geom.setAttribute( `tex${themeName}`, new Int32BufferAttribute( textureArray, 1 ) );
+	 const textureArray = new Int16Array( geometryData.textures[ texture ].index );
+	 geom.setAttribute( `tex${themeName}`, new Int32BufferAttribute( textureArray, 1 ) );
 
-			const textureUVs = new Float32Array( geometryData.textures[ texture ].uvs.flat( 1 ) );
-			geom.setAttribute( `tex${themeName}uv`, new BufferAttribute( textureUVs, 2 ) );
+	 const textureUVs = new Float32Array( geometryData.textures[ texture ].uvs.flat( 1 ) );
+	 geom.setAttribute( `tex${themeName}uv`, new BufferAttribute( textureUVs, 2 ) );
 
-		}
+ }
 
-		geom.attributes.position.needsUpdate = true;
+ geom.attributes.position.needsUpdate = true;
 
-		if ( matrix ) {
+ if ( matrix ) {
 
-			geom.applyMatrix4( matrix );
+	 geom.applyMatrix4( matrix );
 
-		}
+ }
 
-		geom.computeVertexNormals();
+ geom.computeVertexNormals();
 
-		super( geom, material );
+ super( geom, material );
 
-		this.citymodel = citymodel;
+ this.citymodel = citymodel;
 
-		this.isCityObject = true;
-		this.isCityObjectMesh = true;
+ this.isCityObject = true;
+ this.isCityObjectMesh = true;
 
-		this.supportsConditionalFormatting = true;
-		this.supportsMaterials = true;
+ this.supportsConditionalFormatting = true;
+ this.supportsMaterials = true;
 
-	}
+}
 
-	setArrayAsAttribute( array ) {
+setArrayAsAttribute( array ) {
 
-		this.geometry.setAttribute( 'attributevalue', new Int32BufferAttribute( new Int32Array( array ), 1 ) );
+ this.geometry.setAttribute( 'attributevalue', new Int32BufferAttribute( new Int32Array( array ), 1 ) );
 
-	}
+}
 
-	addAttributeByProperty( attributeEvaluator ) {
+addAttributeByProperty( attributeEvaluator ) {
 
-		const allValues = attributeEvaluator.getAllValues();
-		const uniqueValues = attributeEvaluator.getUniqueValues();
+ const allValues = attributeEvaluator.getAllValues();
+ const uniqueValues = attributeEvaluator.getUniqueValues();
 
-		if ( uniqueValues.length < 110 ) {
+ if ( uniqueValues.length < 110 ) {
 
-			const objectLookup = [];
-			for ( const value of allValues ) {
+	 const objectLookup = [];
+	 for ( const value of allValues ) {
 
-				objectLookup.push( uniqueValues.indexOf( value ) );
+		 objectLookup.push( uniqueValues.indexOf( value ) );
 
-			}
+	 }
 
-			const objectIds = this.geometry.attributes.objectid.array;
+	 const objectIds = this.geometry.attributes.objectid.array;
 
-			const finalArray = objectIds.map( i => {
+	 const finalArray = objectIds.map( i => {
 
-				return objectLookup[ i ];
+		 return objectLookup[ i ];
 
-			} );
+	 } );
 
-			if ( finalArray.length !== objectIds.length ) {
+	 if ( finalArray.length !== objectIds.length ) {
 
-				console.warn( "Wrong size of attributes array." );
-				return;
+		 console.warn( "Wrong size of attributes array." );
+		 return;
 
-			}
+	 }
 
-			this.setArrayAsAttribute( finalArray );
+	 this.setArrayAsAttribute( finalArray );
 
-		}
+ }
 
-	}
+}
 
-	getIntersectionVertex( intersection ) {
+getIntersectionVertex( intersection ) {
 
-		return intersection.face.a;
+ return intersection.face.a;
 
-	}
+}
 
-	resolveIntersectionInfo( intersection ) {
+resolveIntersectionInfo( intersection ) {
 
-		const intersectionInfo = {};
+ const intersectionInfo = {};
 
-		const vertexIdx = this.getIntersectionVertex( intersection );
+ const vertexIdx = this.getIntersectionVertex( intersection );
 
-		const idx = this.geometry.getAttribute( 'objectid' ).getX( vertexIdx );
+ const idx = this.geometry.getAttribute( 'objectid' ).getX( vertexIdx );
 
-		intersectionInfo.vertexIndex = vertexIdx;
-		intersectionInfo.objectIndex = idx;
-		intersectionInfo.objectId = Object.keys( this.citymodel.CityObjects )[ idx ];
-		intersectionInfo.geometryIndex = this.geometry.getAttribute( 'geometryid' ).getX( vertexIdx );
-		intersectionInfo.boundaryIndex = this.geometry.getAttribute( 'boundaryid' ).getX( vertexIdx );
+ intersectionInfo.vertexIndex = vertexIdx;
+ intersectionInfo.objectIndex = idx;
+ intersectionInfo.objectId = Object.keys( this.citymodel.CityObjects )[ idx ];
+ intersectionInfo.geometryIndex = this.geometry.getAttribute( 'geometryid' ).getX( vertexIdx );
+ intersectionInfo.boundaryIndex = this.geometry.getAttribute( 'boundaryid' ).getX( vertexIdx );
 
-		intersectionInfo.objectTypeIndex = this.geometry.getAttribute( 'type' ).getX( vertexIdx );
-		intersectionInfo.surfaceTypeIndex = this.geometry.getAttribute( 'surfacetype' ).getX( vertexIdx );
-    //geoscity edits 
-		if (this.geometry.attributes.classtype) {
-			intersectionInfo.classTypeIndex = this.geometry.getAttribute('classtype').getX(vertexIdx);
-		}
-	
-		intersectionInfo.lodIndex = this.geometry.getAttribute( 'lodid' ).getX( vertexIdx );
+ intersectionInfo.objectTypeIndex = this.geometry.getAttribute( 'type' ).getX( vertexIdx );
+ intersectionInfo.surfaceTypeIndex = this.geometry.getAttribute( 'surfacetype' ).getX( vertexIdx );
+ //geoscity edits 
+ if (this.geometry.attributes.classtype) {
+	 intersectionInfo.classTypeIndex = this.geometry.getAttribute('classtype').getX(vertexIdx);
+ }
 
-		return intersectionInfo;
+ intersectionInfo.lodIndex = this.geometry.getAttribute( 'lodid' ).getX( vertexIdx );
 
-	}
+ return intersectionInfo;
 
-	setTextureTheme( theme, textureManager ) {
+}
 
-		if ( theme === "undefined" ) {
+setTextureTheme( theme, textureManager ) {
 
-			this.unsetTextures();
-			return;
+ if ( theme === "undefined" ) {
 
-		}
+	 this.unsetTextures();
+	 return;
 
-		const themeName = theme.replace( /[^a-z0-9]/gi, '' );
+ }
 
-		const attributeName = `tex${themeName}`;
+ const themeName = theme.replace( /[^a-z0-9]/gi, '' );
 
-		if ( attributeName in this.geometry.attributes ) {
+ const attributeName = `tex${themeName}`;
 
-			const textureIds = this.geometry.attributes[ attributeName ].array;
+ if ( attributeName in this.geometry.attributes ) {
 
-			// Create a lookup of textures
-			const { values, indices } = textureIds.reduce( ( p, c, i ) => {
+	 const textureIds = this.geometry.attributes[ attributeName ].array;
 
-				if ( p.last !== c ) {
+	 // Create a lookup of textures
+	 const { values, indices } = textureIds.reduce( ( p, c, i ) => {
 
-					p.values.push( c );
-					p.indices.push( i );
-					p.last = c;
+		 if ( p.last !== c ) {
 
-		  		}
+			 p.values.push( c );
+			 p.indices.push( i );
+			 p.last = c;
 
-		  		return p;
+			 }
 
-			}, { last: - 1, values: [], indices: [] } );
+			 return p;
 
-			const baseMaterial = Array.isArray( this.material ) ? this.material[ this.material.length - 1 ] : this.material;
+	 }, { last: - 1, values: [], indices: [] } );
 
-			const materials = textureManager.getMaterials( baseMaterial );
+	 const baseMaterial = Array.isArray( this.material ) ? this.material[ this.material.length - 1 ] : this.material;
 
-			for ( const mat of materials ) {
+	 const materials = textureManager.getMaterials( baseMaterial );
 
-				if ( mat !== baseMaterial ) {
+	 for ( const mat of materials ) {
 
-					mat.textureTheme = theme;
+		 if ( mat !== baseMaterial ) {
 
-				}
+			 mat.textureTheme = theme;
 
-			}
+		 }
 
-			// TODO: We need to add the last element here
-			for ( let i = 0; i < indices.length - 1; i ++ ) {
+	 }
 
-				this.geometry.addGroup( indices[ i ], indices[ i + 1 ] - indices[ i ], values[ i ] > - 1 ? values[ i ] : materials.length - 1 );
+	 // TODO: We need to add the last element here
+	 for ( let i = 0; i < indices.length - 1; i ++ ) {
 
-			}
+		 this.geometry.addGroup( indices[ i ], indices[ i + 1 ] - indices[ i ], values[ i ] > - 1 ? values[ i ] : materials.length - 1 );
 
-			const i = indices.length - 1;
+	 }
 
-			this.geometry.addGroup( indices[ i ], this.geometry.attributes.type.array.length - indices[ i ], values[ i ] > - 1 ? values[ i ] : materials.length - 1 );
+	 const i = indices.length - 1;
 
-			this.material = materials;
+	 this.geometry.addGroup( indices[ i ], this.geometry.attributes.type.array.length - indices[ i ], values[ i ] > - 1 ? values[ i ] : materials.length - 1 );
 
-		}
+	 this.material = materials;
 
-	}
+ }
 
-	unsetTextures() {
+}
 
-		if ( Array.isArray( this.material ) ) {
+unsetTextures() {
 
-			this.material = this.material[ this.material.length - 1 ];
+ if ( Array.isArray( this.material ) ) {
 
-		}
+	 this.material = this.material[ this.material.length - 1 ];
 
-		this.material.textureTheme = "undefined";
+ }
 
-	}
+ this.material.textureTheme = "undefined";
+
+}
 
 }
